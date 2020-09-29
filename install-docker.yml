@@ -1,0 +1,71 @@
+---
+- name: Provision Docker
+  hosts: all
+  remote_user: ubuntu
+
+  tasks:
+    - name: Remove Old Versions
+      apt: 
+        name: 
+          - docker 
+          - docker-engine
+          - docker.io
+          - containerd
+          - runc
+        state: absent
+        purge: yes
+      become: yes
+
+    - name: Install Supporting Packages
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg-agent
+          - software-properties-common
+        state: latest
+      become: yes
+      
+    - name: Add Docker GPG Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+      become: yes
+
+    - name: Add Docker Repo
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ansible_distribution_release|lower }} stable
+        state: present
+        update_cache: yes
+      become: yes
+
+    - name: Install Docker Packages
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: latest
+      become: yes
+
+    - name: Install Docker-Compose
+      apt:
+        name:
+          - docker-compose
+        state: latest
+      become: yes
+
+    - name: Enable and Start Docker
+      systemd:
+        name: docker.service
+        enabled: yes
+        state: started
+      become: yes
+
+    - name: Add User to Docker Group
+      user:
+        name: ubuntu
+        groups: docker
+        append: yes
+      become: yes

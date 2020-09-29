@@ -109,6 +109,10 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+virtualenv/
+group_vars/*/vars.yaml
+host_vars/*/vars.yaml
+hosts
 
 # Spyder project settings
 .spyderproject
@@ -127,3 +131,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
